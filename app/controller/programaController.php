@@ -6,25 +6,26 @@ use App\Models\CentroModel;
 use App\Models\ProgramaModel;
 
 
-require_once MAIN_APP_ROUTE."../controller/baseController.php";
-require_once MAIN_APP_ROUTE."../models/programaModel.php";
+require_once MAIN_APP_ROUTE . "../controller/baseController.php";
+require_once MAIN_APP_ROUTE . "../models/programaModel.php";
 
+class ProgramaController extends BaseController
+{
 
-
-class ProgramaController extends BaseController{
-
-    public function __construct(){
+    public function __construct()
+    {
         $this->layout = "admin_layout";
     }
-
-    public function index(){
+    public function index()
+    {
+        $this->layout = "admin_layout";
         // echo "<br>CONTROLLER > RolController";
         // echo "<br>ACTION > index";
         // echo "<hr>";
 
         //se crea un objeto del modelo rol
         $objPrograma = new ProgramaModel();
-        $programas = $objPrograma->getAll();
+        $programas = $objPrograma->getAllProgramas();
         // echo "<pre>";
         // print_r($roles);
         // echo "</pre>";
@@ -36,101 +37,102 @@ class ProgramaController extends BaseController{
         $this->render("programa/viewPrograma.php", $data);
     }
 
-    public function viewAll(){
-        $objPrograma = new ProgramaModel();
-        $programas = $objPrograma->getAllPrograma();
-        $data = [
-            "programas" => $programas
-        ];
-        $this->render("programa/viewPrograma.php", $data);
-    }
-
-    public function new(){
-        $objCentros = new CentroModel();
-        $centros = $objCentros->getAll();
-    
-       $data = [
-           "centros" => $centros
-       ];
-        $this->render("programa/newPrograma.php", $data);
-    }
-
-    public function create(){
-        $codigo = $_POST["txtCodigo"] ?? null;
-        $nombre = $_POST["txtNombre"] ?? null;
-        $centro = $_POST["txtCentro"] ?? null;
-        if ($nombre && $codigo && $centro) {
-            $objPrograma = new ProgramaModel(null, $codigo, $nombre, $centro);
-            $res = $objPrograma->save();
-            if ($res) {
-                header("Location: /programa/index");
-
-            }else{
-                
-                header("Location: /programa/index");
-            }
-        }
-    }
-
-    public function editPrograma($id)
+    public function new()
     {
-        $objPrograma = new ProgramaModel($id);
-        $programaInfo = $objPrograma->getOneRol();
-        $objCentros = new CentroModel();
-        $centros = $objCentros->getAll();
+        $objPrograma = new CentroModel();
+        $centroInfo = $objPrograma->getAll();
         $data = [
-            "infoReal" => $programaInfo[0],
-            "centros" => $centros
+            'centros' => $centroInfo,
         ];
-        $this->render("programa/editPrograma.php", $data);
+        $this->render('/programa/newPrograma.php', $data);
+
     }
 
-    public function updatePrograma()
-    {// se edita como tal en la BD
-        if (isset($_POST["txtId"])) {
-            $id = $_POST['txtId'] ?? null;
-            $codigo = $_POST['txtCodigo'] ?? null;
-            $nombre = $_POST['txtNombre'] ?? null;
-            $centro = $_POST['txtCentro'] ?? null;
-            $objProgramaEdit = new ProgramaModel($id, $codigo, $nombre, $centro);
-            $res = $objProgramaEdit->editPrograma();
-            print_r($res);
+    // //Guarda los datos del formulario
+    // public function viewCreate()
+    // {
+    //     $this->render('rols/createRol.php');
 
-            if ($res) {
-                header("Location: /programa/index");
+    // }
+    public function create()
+    {
+        $nombre = $_POST['txtNombre'] ?? null;
+        $codigo = $_POST['txtCodigo'] ?? null;
+        $centroForm = $_POST['txtCentro'] ?? null;
+        if ($nombre) {
+            $objRol = new ProgramaModel(null, $codigo, $nombre, $centroForm);
+            $resp = $objRol->save();
+            if ($resp) {
+                header('Location:/programa/index');
             } else {
-                echo "Error al editar el programa";
+                header('Location: /programa/index');
             }
         }
-        
     }
+
+    public function view($id)
+    {
+        $objRol = new ProgramaModel($id);
+        $porgramInfo = $objRol->getPrograma();
+        $data = [
+            "id" => $porgramInfo[0]->id,
+            "codigo" => $porgramInfo[0]->codigo,
+            "nombre" => $porgramInfo[0]->nombre,
+            "centro" => $porgramInfo[0]->nombreCentro
+        ];
+
+
+        $this->render('programa/viewOnePrograma.php', $data);
+    }
+
+    public function editPrograma($id) {
+        $programaModel = new ProgramaModel($id);
+        
+        // Obtener datos del programa a editar
+        $programa = $programaModel->getPrograma();
+        
+        // Obtener todos los centros disponibles
+        $centrosModel = new ProgramaModel();
+        $centros = $centrosModel->getAllCentros();
+        
+        if (!$programa || empty($centros)) {
+            header("HTTP/1.0 404 Not Found");
+            $this->render('errors/404.php');
+            return;
+        }
+
+        $data = [
+            'programa' => $programa,
+            'centros' => $centros
+        ];
+        
+        $this->render('programa/editPrograma.php', $data);
+    }
+
+    public function updatePrograma() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = $_POST['txtId'] ?? null;
+            $codigo = $_POST["txtCodigo"] ?? null;
+            $nombre = $_POST["txtNombre"] ?? null;
+            $idCentro = $_POST["selCentro"] ?? null; // Cambiado a select
+
+            $programaModel = new ProgramaModel($id, $codigo, $nombre, $idCentro);
+
+            if ($programaModel->editPrograma()) {
+                header("Location: /programa/index");
+                exit;
+            } else {
+                // Manejar error
+                $this->render('errors/500.php');
+            }
+        }
+    }
+
 
     public function deletePrograma($id)
     {
         $objPrograma = new ProgramaModel($id);
-        $res = $objPrograma->deletePrograma();
-
-        if ($res) {
-            header("Location: /programa/index");
-        } else {
-            echo "Error al eliminar el programa";
-        }
+        $objPrograma->deletePrograma();
+        header("Location: /programa/index");
     }
-
-    public function view($id){
-        $objOnePrograma = new ProgramaModel($id);
-        $programa = $objOnePrograma->getOnePrograma();
-       $data = [
-           "id" => $programa[0]->id,
-           "codigo" => $programa[0]->codigo,
-           "nombre" => $programa[0]->nombre,
-           "centro" => $programa[0]->fkidCentroFormacion
-       ];
-         $this->render("programa/viewOnePrograma.php", $data);
-    }
-
-
-    
-
-    
 }

@@ -24,47 +24,43 @@ class RolModel extends BaseModel
     public function save()
     {
         try {
-            // 1. se prepara la consulta
             $sql = $this->dbConnection->prepare("INSERT INTO $this->table (nombre) VALUES (?)");
-            // 2. se remplazan las variables
             $sql->bindParam(1, $this->nombre, PDO::PARAM_STR);
-            // 3. se ejecuta la consulta
             $res = $sql->execute();
             return $res;
-
-        } catch (PDOException $ex) {
-            echo "Erroren la consulta" . $ex->getMessage();
+        } catch (PDOException $e) {
+            echo "Error en consulta " . $e->getMessage();
         }
     }
 
-    public function getOneRol()
+    public function getRol()
     {
         try {
-            $sql = "SELECT * FROM $this->table  WHERE id = :id";
+            // $sql = $this->dbConnection->prepare("SELECT * FROM $this->table WHERE id = (?)");
+            $sql = "SELECT * FROM $this->table WHERE id = :id";
             $statement = $this->dbConnection->prepare($sql);
             $statement->bindParam(":id", $this->id, PDO::PARAM_INT);
             $statement->execute();
+            //Obtenemos los datos en un array asociativo
             $res = $statement->fetchAll(PDO::FETCH_OBJ);
             return $res;
-
-        } catch (PDOException $ex) {
-            echo "Error al obtener rol>" . $ex->getMessage();
+        } catch (PDOException $e) {
+            echo "Error en consulta " . $e->getMessage();
         }
+
     }
 
     public function editRol()
     {
         try {
-            $sql = "UPDATE $this->table SET nombre = :nombre WHERE id = :id";
+            $sql = "UPDATE $this->table SET nombre=:nombre WHERE  id=:id";
             $statement = $this->dbConnection->prepare($sql);
-            $statement->bindParam(":nombre", $this->nombre, PDO::PARAM_STR);
             $statement->bindParam(":id", $this->id, PDO::PARAM_INT);
+            $statement->bindParam(":nombre", $this->nombre, PDO::PARAM_STR);
             $resp = $statement->execute();
-            return $resp;
-        } catch (PDOException $ex) {
-            echo "El no pudo ser editado" . $ex->getMessage();
+        } catch (PDOException $th) {
+            echo "El rol no pudo ser editado> " . $th->getMessage();
         }
-
     }
 
     public function deleteRol()
@@ -73,10 +69,9 @@ class RolModel extends BaseModel
             $sql = "DELETE FROM $this->table WHERE id = :id";
             $statement = $this->dbConnection->prepare($sql);
             $statement->bindParam(":id", $this->id, PDO::PARAM_INT);
-            $res = $statement->execute();
-            return $res;
-        } catch (PDOException $ex) {
-            echo "Error al eliminar el rol" . $ex->getMessage();
+            $statement->execute();
+        } catch (PDOException $th) {
+            echo "" . $th->getMessage();
         }
     }
 }

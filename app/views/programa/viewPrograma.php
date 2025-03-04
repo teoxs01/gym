@@ -1,34 +1,27 @@
-<div class="container2">
-<div class="btn-new">
-
-<a href="/programa/new" class="a-new">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" width="35" height="35"
-        stroke-width="2" stroke-linejoin="round" stroke-linecap="round" stroke="currentColor">
-        <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"></path>
-        <path d="M9 12h6"></path>
-        <path d="M12 9v6"></path>
-    </svg>
-    <span>Crear Rol</span>
-</a>
-</div>
+<div class="crearBTn">
+    <a href="/programa/new" class="BtnCreate">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-linecap="round" stroke-linejoin="round" width="50" height="50" stroke-width="2">
+            <path d="M12 3c7.2 0 9 1.8 9 9s-1.8 9 -9 9s-9 -1.8 -9 -9s1.8 -9 9 -9z"></path>
+            <path d="M15 12h-6"></path>
+            <path d="M12 9v6"></path>
+        </svg>
+    </a>
     <div class="data-container">
-
         <?php
         if (isset($programas) && is_array($programas)) {
-            foreach ($programas as $key => $value) {
+            foreach ($programas as $programa) {
                 echo "<div class='record'>
-                <span>$value->id - $value->codigo - $value->nombre - $value->centro </span>
+                    <span>
+                        $programa->id - $programa->codigo - $programa->nombre - $programa->nombreCentro
+                    </span>
                     <div class='buttons'>
-                        <div class='buttons'>
-                                    <a href='/programa/view/$value->id'>consultar</a>
-                                    <a href='/programa/edit/$value->id'>editar</a>
-                                    <a href='/programa/delete/$value->id'>eliminar</a>
-                                </div>
+                        <a href='/programa/view/$programa->id'>Consultar</a>
+                        <a href='/programa/edit/$programa->id'>Editar</a>
+                        <a href='/programa/delete/$programa->id'>Eliminar</a>
                     </div>
-                </div>";
+                  </div>";
             }
         }
         ?>
-        
     </div>
-</div>

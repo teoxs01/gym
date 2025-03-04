@@ -1,5 +1,5 @@
 <div class="data-container">
-    <form action="/rol/update" method="post">
+    <form action="/centro/view" method="post">
         <div class="form-group">
             <label for="txtNombre">ID</label>
             <input type="read" value="<?php echo $id ?>" name="txtId" id="txtId" readonly>

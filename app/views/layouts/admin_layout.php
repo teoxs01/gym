@@ -16,14 +16,13 @@
         <div class="menu">
             <nav>
                 <ul>
-                    <li><a href="/rol/index">Roles</a></li>
+                    <li><a href="/rol/index" class="btn-left">Roles</a></li>
                     <li><a href="/centro/index">Centros</a></li>
                     <li><a href="/programa/index">Programas</a></li>
                     <li><a href="/actividad/index">Actividades</a></li>
                 </ul>
             </nav>
         </div>
-
         <?php include_once $content; ?>
 
     </div>

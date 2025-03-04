@@ -1,20 +1,12 @@
 <?php
-define("MAIN_APP_ROUTE", __DIR__."/../app/");
-define("DRIVER", "mysql");
-define("HOST", "localhost");
-define("DATABASE", "cpicgym");
-define("USERNAME", "root");
-define("PASSWORD", "");
-define("CHARSET", "uft8mb4");
-define("COLLATION", "utf8mb4_unicode_ci");
+define("driver", "mysql");
+
+define("host", "localhost");
+define("database","gymsena");
+define("username", "root");
+define("password", "");
+define("charset", "uft8mb4");
+define("collation", "utf8mb4_unicode_ci");
 
 
-
-
-// "driver" => "mysql",
-//     "host" => "localhost",
-//     "database" => "cpicgym",
-//     "username" => "root",
-//     "password" => "",
-//     "charset" => "uft8mb4",
-//     "collation" => "utf8mb4_unicode_ci"
+define("MAIN_APP_ROUTE", value: __DIR__."/../app/");

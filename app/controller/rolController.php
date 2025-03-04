@@ -1,18 +1,21 @@
 <?php
 
 namespace App\Controller;
+
 use App\Models\RolModel;
 
-require_once MAIN_APP_ROUTE."../controller/baseController.php";
-require_once MAIN_APP_ROUTE."../models/rolModel.php";
+require_once MAIN_APP_ROUTE . "../controller/baseController.php";
+require_once MAIN_APP_ROUTE . "../models/rolModel.php";
 
-class RolController extends BaseController{
+class RolController extends BaseController
+{
 
     public function __construct()
     {
         $this->layout = "admin_layout";
     }
-    public function index(){
+    public function index()
+    {
         // echo "<br>CONTROLLER > RolController";
         // echo "<br>ACTION > index";
         // echo "<hr>";
@@ -26,80 +29,75 @@ class RolController extends BaseController{
 
         // require_once MAIN_APP_ROUTE."../views/rols/viewRol.php";
         $data = [
+            "title" => "Lista Roles",
             "roles" => $roles
         ];
         $this->render("rols/viewRol.php", $data);
     }
 
-    //Muestra el formulario para crear un nuevo rol
-    public function new(){
-        $this->render("rols/newRol.php");
+    //Muestra el formulario
+    public function new()
+    {
+        $this->render('/rols/newRol.php');
     }
 
-    //guarda los datos del formulario
-    public function create(){
-        $nombre = $_POST["txtNombre"] ?? null;
+    //Guarda los datos del formulario
+    public function viewCreate()
+    {
+        $this->render('rols/createRol.php');
+    }
+    public function create()
+    {
+        $nombre = $_POST['txtNombre'] ?? null;
         if ($nombre) {
             $objRol = new RolModel(null, $nombre);
-            $res = $objRol->save();
-            if ($res) {
-                header("Location: /rol/index");
-
-            }else{
-                
-                header("Location: /rol/index");
+            $resp = $objRol->save();
+            if ($resp) {
+                header('Location:/rol/index');
+            } else {
+                header('Location: /rol/index');
             }
         }
     }
 
-    public function view($id){
-        $objOneRol = new RolModel($id);
-        $rol = $objOneRol->getOneRol();
-       $data = [
-           "id" => $rol[0]->id,
-           "nombre" => $rol[0]->nombre
-       ];
-         $this->render("rols/viewOneRol.php", $data);
+    public function view($id)
+    {
+        $objRol = new RolModel($id);
+        $rolInfo = $objRol->getRol();
+        $data = [
+            "id" => $rolInfo[0]->id,
+            "nombre" => $rolInfo[0]->nombre
+        ];
+
+
+        $this->render('rols/viewOneRol.php', $data);
     }
 
     public function editRol($id)
     {
         $objRol = new RolModel($id);
-        $rolInfo = $objRol->getOneRol();
+        $rolInfo = $objRol->getRol();
         $data = [
-            "infoReal" => $rolInfo[0]
+            'infoReal' => $rolInfo[0],
         ];
-        $this->render("rols/editRol.php", $data);
+        $this->render('rols/editRol.php', $data);
     }
-    public function updateRol()
-    {// se edita como tal en la BD
-        if (isset($_POST["txtId"])) {
-            $id = $_POST['txtId'] ?? null;
-            $nombre = $_POST['txtNombre'] ?? null;
-            $objRolEdit = new RolModel($id, $nombre);
-            $res = $objRolEdit->editRol();
-            print_r($res);
 
-            if ($res) {
-                header("Location: /rol/index");
-            } else {
-                echo "Error al editar el rol";
-            }
+    public function updateRol()
+    {
+        if (isset($_POST['txtId'])) {
+            $id = $_POST['txtId'] ?? null;
+            $nombre = $_POST["txtNombre"] ?? null;
+            $objRolEdit = new RolModel($id, $nombre);
+            $objRolEdit->editRol();
+            header("Location: /rol/index");
         }
-        
     }
-    
+
     public function deleteRol($id)
     {
         $objRol = new RolModel($id);
-        $res = $objRol->deleteRol();
-
-        if ($res) {
-            header("Location: /rol/index");
-        } else {
-            echo "Error al eliminar el rol";
-        }
+        $objRol->deleteRol();
+        header("Location: /rol/index");
     }
-
-    
 }
